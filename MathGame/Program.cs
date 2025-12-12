@@ -25,35 +25,161 @@ Create a menu.
 
  */
 
+using System.IO.Pipelines;
 using System.Numerics;
+using System.Security.Authentication;
 using System.Threading.Tasks.Sources;
 
 
-int score = 0;
+string menuSelection = "";
+string operation = "Addition";
+string difficulty = "Easy";
+int numberOfQuestions = 5;
+
+do
+{
+    string readResult = "";
+    int score = 0;
+
+    Console.WriteLine("\nWelcome to the Math Game!");
+    Console.WriteLine("\nPlease select an option (1,2,3,4,5).");
+    Console.WriteLine("1) Play!");
+    Console.WriteLine($"2) Select Operation (currently {operation}).");
+    Console.WriteLine($"3) Select Difficulty (default {difficulty}).");
+    Console.WriteLine("4) View History.");
+    Console.WriteLine("5) Exit.");
+
+    readResult = Console.ReadLine();
+    if (readResult != null)
+    {
+        menuSelection = readResult;
+    }
+
+    switch (menuSelection)
+    {
+        case "1":
+            for (int i = 0; i < numberOfQuestions; i++)
+            {
+                int correctAnswer = GenerateQuestionAndAnswer(operation, difficulty);
+                int playerAnswer = AcceptInput();
+                bool success = CheckAnswer(playerAnswer, correctAnswer);
+                if (success) score++;
+            }
+            double finalScorePercent = 100*((double)score / (double)numberOfQuestions);
+            Console.WriteLine($"\nYour final score is {score} out of {numberOfQuestions}. {finalScorePercent}%!");
+
+
+            break;
+
+        case "2":
+            Console.WriteLine("\nPlease select an operation (1,2,3,4).");
+            Console.WriteLine("1) Addition\n2) Subtraction\n3) Multiplication\n4) Division\n5) Random");
+            readResult = Console.ReadLine();
+            string operationSelection = readResult;
+            switch (operationSelection)
+            {
+                case "1":
+                    operation = "Addition";
+                    break;
+
+                case "2":
+                    operation = "Subtraction";
+                    break;
+
+                case "3":
+                    operation = "Multiplication";
+                    break;
+                
+                case "4":
+                    operation = "Division";
+                    break;
+
+                case "5":
+                    operation = "Random";
+                    break;
+
+                default:
+                    Console.WriteLine("Sorry. Your input is invalid.");
+
+                    break;
+            }
+            break;
+
+        case "3":
+            Console.WriteLine("\nPlease select a difficulty (1,2,3).");
+            Console.WriteLine("1) Easy\n2) Medium\n3) Hard");
+            readResult = Console.ReadLine();
+            string difficultySelection = readResult;
+            switch (difficultySelection)
+            {
+                case "1":
+                    difficulty = "Easy";
+                    break;
+
+                case "2":
+                    difficulty = "Medium";
+                    break;
+
+                case "3":
+                    difficulty = "Hard";
+                    break;
+
+                default:
+                    Console.WriteLine("Sorry. Your input is invalid.");
+
+                    break;
+            }
+            break;
+
+        case "4":
+
+            break;
+
+        case "5":
+            Console.WriteLine("\nThanks for playing!");
+            break;
+
+        default:
+            Console.WriteLine("Invalid Input.");
+            break;
+
+    }
+} while (menuSelection != "5");
 
 
 
 
 
 
-
-
-
-int GenerateQuestionAndAnswer(string operation, int difficulty = 1)
+int GenerateQuestionAndAnswer(string operation, string difficulty)
 {
     Random random = new Random();
 
     int num1 = random.Next(1, 11);
     int num2 = random.Next(1, 11);
 
+    if (operation == "Random")
+    {
+        int determineOperation = random.Next(1, 5);
+
+        if (determineOperation == 1)
+            operation = "Addition";
+        if (determineOperation == 2)
+            operation = "Subtraction";
+        if (determineOperation == 3)
+            operation = "Multiplication";
+        if (determineOperation == 4)
+            operation = "Division";
+    }
+
     switch (operation)
     {
-        case "addition":
+        case "Addition":
 
             Console.WriteLine($"Question: {num1} + {num2} = ?");
             return num1 + num2;
 
-        case "subtraction":
+        case "Subtraction":
 
             if (num1 >= num2)
             {
@@ -66,12 +192,12 @@ int GenerateQuestionAndAnswer(string operation, int difficulty = 1)
                 return num2 - num1;
             }
 
-        case "multiplication":
+        case "Multiplication":
 
             Console.WriteLine($"Question: {num1} x {num2} = ?");
             return num1 * num2;
 
-        case "division":
+        case "Division":
 
             while (num1 % num2 != 0 && num1 < num2)
             {
@@ -107,8 +233,13 @@ int AcceptInput()
 bool CheckAnswer(int inputAnswer, int correctAnswer)
 {
     if (inputAnswer != correctAnswer)
+    {
+        Console.WriteLine("Incorrect.");
         return false;
+    }
     else
-        score++;
+    {
+        Console.WriteLine("Correct!");
         return true;
+    }
 }
