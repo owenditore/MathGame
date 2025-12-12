@@ -16,14 +16,6 @@ Additional Challenges:
 
 */
 
-/*
-
-Plan for the code:
-Create a method that generates the questions.
-Create a method that checks the answer and potentially awards a point.
-Create a menu.
-
- */
 
 using System.Diagnostics;
 using System.IO.Pipelines;
