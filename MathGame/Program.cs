@@ -25,6 +25,7 @@ Create a menu.
 
  */
 
+using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Numerics;
 using System.Security.Authentication;
@@ -34,13 +35,19 @@ string menuSelection = "";
 string operation = "Addition";
 string difficulty = "Easy";
 int numberOfQuestions = 5;
+int numberOfGamesPlayed = 0;
+int totalScore = 0;
+int totalTime = 0;
+
+List<string> gameHistory = new List<string>();
+
+Console.WriteLine("\nWelcome to the Math Game!");
 
 do
 {
     string readResult = "";
     int score = 0;
 
-    Console.WriteLine("\nWelcome to the Math Game!");
     Console.WriteLine("\nPlease select an option (1,2,3,4,5).");
     Console.WriteLine("1) Play!");
     Console.WriteLine($"2) Select Operation (currently {operation}).");
@@ -57,6 +64,9 @@ do
     switch (menuSelection)
     {
         case "1":
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            numberOfGamesPlayed++;
             for (int i = 0; i < numberOfQuestions; i++)
             {
                 int correctAnswer = GenerateQuestionAndAnswer(operation, difficulty);
@@ -64,8 +74,18 @@ do
                 bool success = CheckAnswer(playerAnswer, correctAnswer);
                 if (success) score++;
             }
-            double finalScorePercent = 100*((double)score / (double)numberOfQuestions);
-            Console.WriteLine($"\nYour final score is {score} out of {numberOfQuestions}. {finalScorePercent}%!");
+
+            stopWatch.Stop();
+            TimeSpan ts = stopWatch.Elapsed;
+            int timeTaken = ts.Seconds;
+
+            double finalScorePercent = 100 * ((double)score / (double)numberOfQuestions);
+            Console.WriteLine($"\nYour final score is {score} out of {numberOfQuestions}. {finalScorePercent}%! In a time of {timeTaken} seconds.");
+            gameHistory.Add($"Game {numberOfGamesPlayed}\nOperation: {operation}\nDifficulty: {difficulty}\n{score} out of {numberOfQuestions}\n{timeTaken} seconds.\n");
+
+            totalScore += score;
+            totalTime += timeTaken;
+
 
 
             break;
@@ -131,7 +151,13 @@ do
             break;
 
         case "4":
-
+            Console.WriteLine("\nYour Game History:\n");
+            for (int i = 0; i < gameHistory.Count; i++)
+            {
+                Console.WriteLine(gameHistory[i]);
+            }
+            Console.WriteLine($"Total Score is {totalScore} out of {(numberOfGamesPlayed * numberOfQuestions)}");
+            Console.WriteLine($"Total Time is {totalTime} seconds.");
             break;
 
         case "5":
