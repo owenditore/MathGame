@@ -30,7 +30,6 @@ using System.Numerics;
 using System.Security.Authentication;
 using System.Threading.Tasks.Sources;
 
-
 string menuSelection = "";
 string operation = "Addition";
 string difficulty = "Easy";
@@ -140,7 +139,7 @@ do
             break;
 
         default:
-            Console.WriteLine("Invalid Input.");
+            Console.WriteLine("\nInvalid Input. Please enter a number 1 - 5.");
             break;
 
     }
@@ -155,8 +154,24 @@ int GenerateQuestionAndAnswer(string operation, string difficulty)
 {
     Random random = new Random();
 
-    int num1 = random.Next(1, 11);
-    int num2 = random.Next(1, 11);
+    int num1 = 0;
+    int num2 = 0;
+
+    if (difficulty == "Easy")
+    {
+        num1 = random.Next(1, 6);
+        num2 = random.Next(1, 6);
+    }
+    else if (difficulty == "Medium")
+    {
+        num1 = random.Next(1, 21);
+        num2 = random.Next(1, 21);
+    }
+    else
+    {
+        num1 = random.Next(1, 101);
+        num2 = random.Next(1, 101);
+    }
 
     if (operation == "Random")
     {
@@ -176,36 +191,32 @@ int GenerateQuestionAndAnswer(string operation, string difficulty)
     {
         case "Addition":
 
-            Console.WriteLine($"Question: {num1} + {num2} = ?");
+            Console.WriteLine($"\nQuestion: {num1} + {num2} = ?");
             return num1 + num2;
 
         case "Subtraction":
 
             if (num1 >= num2)
             {
-                Console.WriteLine($"Question: {num1} - {num2} = ?");
+                Console.WriteLine($"\nQuestion: {num1} - {num2} = ?");
                 return num1 - num2;
             }
             else
             {
-                Console.WriteLine($"Question: {num2} - {num1} = ?");
+                Console.WriteLine($"\nQuestion: {num2} - {num1} = ?");
                 return num2 - num1;
             }
 
         case "Multiplication":
 
-            Console.WriteLine($"Question: {num1} x {num2} = ?");
+            Console.WriteLine($"\nQuestion: {num1} x {num2} = ?");
             return num1 * num2;
 
         case "Division":
 
-            while (num1 % num2 != 0 && num1 < num2)
-            {
-                num1++;
-            }
-
-            Console.WriteLine($"Question: {num1} / {num2} = ?");
-            return num1 / num2;
+            int num3 = num1 * num2;
+            Console.WriteLine($"\nQuestion: {num3} / {num1} = ?");
+            return num3 / num1;
 
         default:
             return 0;
