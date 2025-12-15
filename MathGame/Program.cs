@@ -16,35 +16,28 @@ Additional Challenges:
 
 */
 
-//New Branch MathGameWithClasses
 
+using MathGame;
 using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Numerics;
 using System.Security.Authentication;
 using System.Threading.Tasks.Sources;
 
-string menuSelection = "";
-string operation = "Addition";
-string difficulty = "Easy";
-int numberOfQuestions = 5;
-int numberOfGamesPlayed = 0;
-int totalScore = 0;
-int totalTime = 0;
 
-List<string> gameHistory = new List<string>();
+string menuSelection = "";
+Game game = new Game();
 
 Console.WriteLine("\nWelcome to the Math Game!");
 
 do
 {
     string readResult = "";
-    int score = 0;
 
     Console.WriteLine("\nPlease select an option (1,2,3,4,5).");
     Console.WriteLine("1) Play!");
-    Console.WriteLine($"2) Select Operation (currently {operation}).");
-    Console.WriteLine($"3) Select Difficulty (default {difficulty}).");
+    Console.WriteLine($"2) Select Operation (currently {game.Operation}).");
+    Console.WriteLine($"3) Select Difficulty (default {game.Difficulty}).");
     Console.WriteLine("4) View History.");
     Console.WriteLine("5) Exit.");
 
@@ -57,29 +50,8 @@ do
     switch (menuSelection)
     {
         case "1":
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-            numberOfGamesPlayed++;
-            for (int i = 0; i < numberOfQuestions; i++)
-            {
-                int correctAnswer = GenerateQuestionAndAnswer(operation, difficulty);
-                int playerAnswer = AcceptInput();
-                bool success = CheckAnswer(playerAnswer, correctAnswer);
-                if (success) score++;
-            }
 
-            stopWatch.Stop();
-            TimeSpan ts = stopWatch.Elapsed;
-            int timeTaken = ts.Seconds;
-
-            double finalScorePercent = 100 * ((double)score / (double)numberOfQuestions);
-            Console.WriteLine($"\nYour final score is {score} out of {numberOfQuestions}. {finalScorePercent}%! In a time of {timeTaken} seconds.");
-            gameHistory.Add($"Game {numberOfGamesPlayed}\nOperation: {operation}\nDifficulty: {difficulty}\n{score} out of {numberOfQuestions}\n{timeTaken} seconds.\n");
-
-            totalScore += score;
-            totalTime += timeTaken;
-
-
+            game.PlayGame();
 
             break;
 
@@ -91,28 +63,27 @@ do
             switch (operationSelection)
             {
                 case "1":
-                    operation = "Addition";
+                    game.Operation = "Addition";
                     break;
 
                 case "2":
-                    operation = "Subtraction";
+                    game.Operation = "Subtraction";
                     break;
 
                 case "3":
-                    operation = "Multiplication";
+                    game.Operation = "Multiplication";
                     break;
                 
                 case "4":
-                    operation = "Division";
+                    game.Operation = "Division";
                     break;
 
                 case "5":
-                    operation = "Random";
+                    game.Operation = "Random";
                     break;
 
                 default:
                     Console.WriteLine("Sorry. Your input is invalid.");
-
                     break;
             }
             break;
@@ -125,15 +96,15 @@ do
             switch (difficultySelection)
             {
                 case "1":
-                    difficulty = "Easy";
+                    game.Difficulty = "Easy";
                     break;
 
                 case "2":
-                    difficulty = "Medium";
+                    game.Difficulty = "Medium";
                     break;
 
                 case "3":
-                    difficulty = "Hard";
+                    game.Difficulty = "Hard";
                     break;
 
                 default:
@@ -144,13 +115,7 @@ do
             break;
 
         case "4":
-            Console.WriteLine("\nYour Game History:\n");
-            for (int i = 0; i < gameHistory.Count; i++)
-            {
-                Console.WriteLine(gameHistory[i]);
-            }
-            Console.WriteLine($"Total Score is {totalScore} out of {(numberOfGamesPlayed * numberOfQuestions)}");
-            Console.WriteLine($"Total Time is {totalTime} seconds.");
+            game.PrintGameHistory();
             break;
 
         case "5":
@@ -164,112 +129,3 @@ do
     }
 } while (menuSelection != "5");
 
-
-
-
-
-
-int GenerateQuestionAndAnswer(string operation, string difficulty)
-{
-    Random random = new Random();
-
-    int num1 = 0;
-    int num2 = 0;
-
-    if (difficulty == "Easy")
-    {
-        num1 = random.Next(1, 6);
-        num2 = random.Next(1, 6);
-    }
-    else if (difficulty == "Medium")
-    {
-        num1 = random.Next(1, 21);
-        num2 = random.Next(1, 21);
-    }
-    else
-    {
-        num1 = random.Next(1, 101);
-        num2 = random.Next(1, 101);
-    }
-
-    if (operation == "Random")
-    {
-        int determineOperation = random.Next(1, 5);
-
-        if (determineOperation == 1)
-            operation = "Addition";
-        if (determineOperation == 2)
-            operation = "Subtraction";
-        if (determineOperation == 3)
-            operation = "Multiplication";
-        if (determineOperation == 4)
-            operation = "Division";
-    }
-
-    switch (operation)
-    {
-        case "Addition":
-
-            Console.WriteLine($"\nQuestion: {num1} + {num2} = ?");
-            return num1 + num2;
-
-        case "Subtraction":
-
-            if (num1 >= num2)
-            {
-                Console.WriteLine($"\nQuestion: {num1} - {num2} = ?");
-                return num1 - num2;
-            }
-            else
-            {
-                Console.WriteLine($"\nQuestion: {num2} - {num1} = ?");
-                return num2 - num1;
-            }
-
-        case "Multiplication":
-
-            Console.WriteLine($"\nQuestion: {num1} x {num2} = ?");
-            return num1 * num2;
-
-        case "Division":
-
-            int num3 = num1 * num2;
-            Console.WriteLine($"\nQuestion: {num3} / {num1} = ?");
-            return num3 / num1;
-
-        default:
-            return 0;
-    }
-}
-
-int AcceptInput()
-{
-    bool validInput = false;
-    do
-    {
-        string input = Console.ReadLine();
-        if (int.TryParse(input, out int intInput))
-        {
-            validInput = true;
-            return intInput;
-        }
-        else
-            Console.WriteLine("Input was invalid. Try again.");
-
-    } while (validInput == false);
-    return 0;
-}
-
-bool CheckAnswer(int inputAnswer, int correctAnswer)
-{
-    if (inputAnswer != correctAnswer)
-    {
-        Console.WriteLine("Incorrect.");
-        return false;
-    }
-    else
-    {
-        Console.WriteLine("Correct!");
-        return true;
-    }
-}
