@@ -96,21 +96,26 @@ namespace MathGame
         private int GenerateQuestionAndAnswer()
         {
             Random random = new Random();
+            string tempOperation = "";
             if (operation == "Random")
             {
                 int determineOperation = random.Next(1, 5);
 
                 if (determineOperation == 1)
-                    operation = "Addition";
+                    tempOperation = "Addition";
                 if (determineOperation == 2)
-                    operation = "Subtraction";
+                    tempOperation = "Subtraction";
                 if (determineOperation == 3)
-                    operation = "Multiplication";
+                    tempOperation = "Multiplication";
                 if (determineOperation == 4)
-                    operation = "Division";
+                    tempOperation = "Division";
+            }
+            else
+            {
+                tempOperation = operation;
             }
 
-            switch (operation)
+            switch (tempOperation)
             {
                 case "Addition":
 
